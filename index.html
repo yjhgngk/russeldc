@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>러셀 대치 - 나의 예상반 진단</title>
+    <style>
+        * { box-sizing: border-box; }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f8f9fa;
+            font-family: 'Noto Sans KR', 'Pretendard', 'Malgun Gothic', sans-serif;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 820px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .head-card {
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 24px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #0052CC 0%, #0040A8 100%);
+            padding: 32px 40px;
+            text-align: center;
+            color: #fff;
+        }
+        
+        .header-brand {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            opacity: 0.9;
+            margin-bottom: 6px;
+        }
+        
+        .header h1 {
+            font-size: 30px;
+            margin: 0 0 10px;
+            font-weight: 800;
+            letter-spacing: -0.04em;
+        }
+        
+        .header p {
+            font-size: 14px;
+            margin: 0;
+            opacity: 0.92;
+            font-weight: 500;
+        }
+        
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            padding: 28px;
+            margin-bottom: 24px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .head-card .card {
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            margin-bottom: 0;
+        }
+        
+        .card h2 {
+            font-size: 18px;
+            color: #1a1a1a;
+            font-weight: 700;
+            margin: 0 0 24px;
+            border-bottom: 2px solid #0052CC;
+            padding-bottom: 12px;
+            letter-spacing: -0.03em;
+        }
+        
+        .section-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #555;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .student-type-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .type-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            background: #fff;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #555;
+        }
+        
+        .type-btn.active {
+            background: #0052CC;
+            color: #fff;
+            border-color: #0052CC;
+        }
+        
+        .exam-mode-group {
+            display: none;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .exam-mode-group.show {
+            display: flex;
+        }
+        
+        .mode-btn {
+            flex: 1;
+            padding: 11px 16px;
+            border: 2px solid #e0e0e0;
+            background: #fff;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #555;
+        }
+        
+        .mode-btn.active {
+            background: #0052CC;
+            color: #fff;
+            border-color: #0052CC;
+        }
+        
+        .form-section {
+            margin-bottom: 20px;
+        }
+        
+        .exam-select-wrapper {
+            width: 100%;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 4px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            padding: 6px 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #0f172a;
+            font-family: 'Noto Sans KR', sans-serif;
+            transition: border-color 0.2s;
+            background: #fff;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #0052CC;
+            box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.1);
+        }
+        
+        .divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 16px 0;
+        }
+        
+        .grade-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background: #fff;
+        }
+        
+        .grade-table th {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            padding: 12px 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+        }
+        
+        .grade-table td {
+            border: 1px solid #e0e0e0;
+            padding: 8px 4px;
+            text-align: center;
+        }
+        
+        .grade-table input {
+            width: 100%;
+            padding: 6px 0 !important;
+            border: none !important;
+            text-align: center;
+            font-size: 13px;
+        }
+        
+        .grade-table input:focus {
+            outline: none;
+            background: #f0f7ff;
+        }
+        
+        .grade-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            border: 1px solid #d0d0d0;
+            background: #f0f0f0;
+            color: #555;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.2s;
+        }
+        
+        .btn-small:hover {
+            background: #e5e5e5;
+        }
+        
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 12px 0;
+            font-weight: 600;
+            color: #1a1a1a;
+            user-select: none;
+        }
+        
+        .collapsible-header:hover {
+            color: #0052CC;
+        }
+        
+        .toggle-icon {
+            display: inline-block;
+            font-size: 12px;
+            transition: transform 0.2s;
+            color: #0052CC;
+        }
+        
+        .toggle-icon.open {
+            transform: rotate(180deg);
+        }
+        
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        
+        .collapsible-content.show {
+            max-height: 500px;
+            transition: max-height 0.3s ease-in;
+        }
+        
+        .info-box {
+            background: #f0f7ff;
+            border-left: 4px solid #0052CC;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            font-size: 12px;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        button {
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: -0.03em;
+        }
+        
+        .btn-primary {
+            background: #0052CC;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 82, 204, 0.15);
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .btn-primary:hover {
+            background: #0040A8;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 82, 204, 0.2);
+        }
+        
+        .result-section {
+            display: none;
+            animation: slideUp 0.4s ease-out;
+        }
+        
+        .result-section.show {
+            display: block;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .result-badge {
+            text-align: center;
+            padding: 36px 28px;
+            background: linear-gradient(135deg, #0052CC 0%, #0040A8 100%);
+            color: #fff;
+        }
+        
+        .result-body {
+            background: #f4f6fa;
+        }
+        
+        .result-body .details-table th {
+            background: #e8ecf4;
+        }
+        
+        .result-body .details-table td,
+        .result-body .tuition-table tbody tr:not(.row-highlight) td:not(.cell-name):not(.cell-duty):not(.cell-free) {
+            background: #fff;
+        }
+        
+        .result-body .tuition-table .cell-name {
+            background: #eef0f5;
+        }
+        
+        .result-body .info-box {
+            background: #e9eff9;
+        }
+        
+        .badge-label {
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            opacity: 0.9;
+        }
+        
+        .badge-class {
+            font-size: 48px;
+            font-weight: 800;
+            margin: 0;
+            line-height: 1.2;
+            letter-spacing: -0.04em;
+        }
+        
+        .badge-comparison {
+            font-size: 13px;
+            margin-top: 18px;
+            font-weight: 500;
+            line-height: 1.6;
+            background: rgba(255, 255, 255, 0.16);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 10px;
+            padding: 12px 16px;
+            text-align: center;
+            color: #fff;
+        }
+        
+        .badge-comparison:empty {
+            display: none;
+        }
+        
+        .details-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+        
+        .details-table th {
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            padding: 10px 6px;
+            font-weight: 700;
+            color: #333;
+            text-align: center;
+        }
+        
+        .details-table td {
+            border: 1px solid #e0e0e0;
+            padding: 10px 6px;
+            text-align: center;
+            font-weight: 600;
+            color: #0052CC;
+            font-size: 15px;
+        }
+        
+        .tuition-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+        
+        .tuition-wrap {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .tuition-table {
+            width: 100%;
+            min-width: 560px;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        
+        .tuition-table th {
+            background: #2d3142;
+            color: #fff;
+            border: 1px solid #4a4f63;
+            padding: 8px 6px;
+            font-weight: 700;
+            text-align: center;
+            white-space: nowrap;
+        }
+        
+        .tuition-table td {
+            border: 1px solid #e0e0e0;
+            padding: 8px 6px;
+            text-align: center;
+            background: #fff;
+            white-space: nowrap;
+        }
+        
+        .tuition-table .cell-name {
+            font-weight: 700;
+            background: #f8f9fa;
+            text-align: center;
+        }
+        
+        .tuition-table .cell-duty {
+            font-weight: 700;
+            background: #eef0f4;
+        }
+        
+        .tuition-table .cell-free {
+            font-weight: 700;
+            color: #0052CC;
+            background: #eaf2ff;
+        }
+        
+        .tuition-table .cell-empty {
+            color: #bbb;
+        }
+        
+        .tuition-table tr.row-highlight td {
+            background: #fff6d6;
+            border-top: 2px solid #f0a500;
+            border-bottom: 2px solid #f0a500;
+        }
+        
+        .tuition-table tr.row-highlight td:first-child {
+            border-left: 2px solid #f0a500;
+        }
+        
+        .tuition-table tr.row-highlight td:last-child {
+            border-right: 2px solid #f0a500;
+        }
+        
+        .tuition-table tr.row-highlight .cell-free {
+            background: #ffe9a8;
+        }
+        
+        .mine-tag {
+            display: inline-block;
+            background: #f0a500;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            border-radius: 4px;
+            padding: 1px 5px;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+        
+        .tuition-note {
+            font-size: 11px;
+            color: #555;
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 10px 12px;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+        
+        .lecture-box {
+            background: #fff;
+            border: 1px solid #dfe3ec;
+            border-radius: 10px;
+            padding: 16px 18px;
+            margin: 20px 0;
+        }
+        
+        .lecture-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+        }
+        
+        .lecture-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            font-size: 13px;
+            color: #333;
+            padding: 6px 0;
+            white-space: nowrap;
+        }
+        
+        .lecture-row input {
+            width: 56px;
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 13px;
+            text-align: center;
+            font-family: inherit;
+        }
+        
+        .lecture-row input:focus {
+            outline: none;
+            border-color: #0052CC;
+            box-shadow: 0 0 0 2px rgba(0, 82, 204, 0.1);
+        }
+        
+        .lecture-sum {
+            color: #555;
+            white-space: nowrap;
+        }
+        
+        .lecture-sum b {
+            color: #0052CC;
+            font-size: 15px;
+        }
+        
+        .lecture-result {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px dashed #dfe3ec;
+            font-size: 13px;
+            line-height: 1.7;
+            color: #333;
+        }
+        
+        .lecture-result b {
+            color: #0052CC;
+            font-size: 15px;
+        }
+        
+        .lecture-result .warn {
+            color: #b45309;
+        }
+        
+        .tuition-table td.col-highlight {
+            outline: 2px solid #0052CC;
+            outline-offset: -2px;
+        }
+        
+        .tuition-table th.col-highlight {
+            background: #0052CC;
+        }
+        
+        .action-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 20px;
+            align-items: stretch;
+        }
+        
+        .action-row .btn-apply,
+        .action-row .btn-primary {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 50px;
+            margin: 0;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.35;
+            text-align: center;
+            letter-spacing: -0.03em;
+            box-sizing: border-box;
+        }
+        
+        .btn-apply {
+            background: #e8f1ff;
+            border: 1px solid #b9d3f7;
+            color: #0052CC;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .btn-apply:hover {
+            background: #d8e8ff;
+            border-color: #8fb9f0;
+            transform: translateY(-1px);
+        }
+        
+        .action-row .btn-primary {
+            border: 1px solid #0052CC;
+        }
+        
+        .notice-list {
+            margin: 6px 0 0;
+            padding-left: 16px;
+        }
+        
+        .notice-list li {
+            margin-bottom: 4px;
+        }
+        
+        .notice-list li:last-child {
+            margin-bottom: 0;
+        }
+        
+        .notice {
+            background: #f0f7ff;
+            border-radius: 8px;
+            border-left: 4px solid #0052CC;
+            color: #333;
+            font-size: 12px;
+            padding: 16px;
+            line-height: 1.7;
+            margin-top: 28px;
+        }
+        
+        .notice strong {
+            color: #0052CC;
+            display: block;
+            margin-bottom: 6px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px 16px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .header {
+                padding: 24px 20px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .badge-class {
+                font-size: 36px;
+            }
+            
+            .grade-table th, .grade-table td {
+                padding: 8px 4px;
+                font-size: 11px;
+            }
+            
+            .grade-table input {
+                font-size: 12px;
+            }
+            
+            .action-row {
+                gap: 8px;
+            }
+            
+            .action-row .btn-apply,
+            .action-row .btn-primary {
+                font-size: 12px;
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="head-card" id="inputHeadCard">
+        <div class="header">
+            <div class="header-brand">러셀 대치</div>
+            <h1>나의 예상반 진단</h1>
+            <p>성적을 입력하고 러셀 대치에서의 예상 반배정을 확인해보세요.</p>
+        </div>
+        
+        <div class="card" id="inputCard">
+            <h2>성적 정보 입력</h2>
+        
+        <div class="form-section">
+            <div class="section-label">학생 구분</div>
+            <div class="student-type-group">
+                <button type="button" class="type-btn active" data-type="repeat" onclick="changeStudentType('repeat')">N수</button>
+                <button type="button" class="type-btn" data-type="current" onclick="changeStudentType('current')">재학생</button>
+            </div>
+        </div>
+        
+        <div id="examModeLabel" style="margin-bottom: 12px; display: none;">
+            <div class="section-label">전형 선택 (대학전형은 24~26학번 지원가능)</div>
+        </div>
+        <div class="exam-mode-group" id="examModeGroup">
+            <button type="button" class="mode-btn active" data-mode="score" onclick="changeExamMode('score')">성적전형</button>
+            <button type="button" class="mode-btn" data-mode="univ" onclick="changeExamMode('univ')">대학전형</button>
+        </div>
+        
+        <div class="form-section">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                <div class="exam-select-wrapper">
+                    <div class="form-group">
+                        <label for="examType">제출 성적표</label>
+                        <select id="examType">
+                            <option value="high3">고3 (25,26학년 전국연합평가)</option>
+                            <option value="suneung" selected>수능</option>
+                            <option value="9pyung">9평</option>
+                            <option value="6pyung">6평</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="gradeSelectSection" style="display: none;">
+                    <div class="form-group">
+                        <label for="selectGrade">현재 학년</label>
+                        <select id="selectGrade">
+                            <option value="grade3">고3</option>
+                            <option value="grade2">고2</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div id="univSelectSection" style="display: none;">
+                    <div class="form-group">
+                        <label for="selectUniv">현재 재학 중인 학교</label>
+                        <select id="selectUniv">
+                            <option value="">학교 선택</option>
+                            <optgroup label="의/치/한/수/약">
+                                <option value="의약계열">의/치/한/수/약</option>
+                            </optgroup>
+                            <optgroup label="서울대 · 연고대 · 과기원">
+                                <option value="서울대">서울대학교</option>
+                                <option value="연세대">연세대학교(서울)</option>
+                                <option value="고려대">고려대학교(서울)</option>
+                                <option value="KAIST">KAIST</option>
+                                <option value="POSTECH">POSTECH</option>
+                            </optgroup>
+                            <optgroup label="주요 사립대 · 과학기술원">
+                                <option value="서강대">서강대학교</option>
+                                <option value="성균관대">성균관대학교</option>
+                                <option value="한양대">한양대학교(서울)</option>
+                                <option value="이화여대">이화여자대학교</option>
+                                <option value="중앙대">중앙대학교(서울)</option>
+                                <option value="GIST">GIST(광주과학기술원)</option>
+                                <option value="DGIST">DGIST(대구경북과학기술원)</option>
+                                <option value="UNIST">UNIST(울산과학기술원)</option>
+                                <option value="KENTECH">KENTECH(한국에너지공과대)</option>
+                            </optgroup>
+                            <optgroup label="인서울 주요대 · 교대">
+                                <option value="경희대">경희대학교</option>
+                                <option value="시립대">서울시립대학교</option>
+                                <option value="외대">한국외국어대학교(서울)</option>
+                                <option value="건국대">건국대학교(서울)</option>
+                                <option value="동국대">동국대학교(서울)</option>
+                                <option value="홍익대">홍익대학교(서울)</option>
+                                <option value="숙명여대">숙명여자대학교</option>
+                                <option value="서울교대">서울교육대학교</option>
+                                <option value="경인교대">경인교육대학교</option>
+                            </optgroup>
+                            <optgroup label="기타">
+                                <option value="기타4년제">상기 외 4년제 대학 (신학/예술대 제외)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="form-section">
+            <div class="grade-header">
+                <div class="section-label" style="margin-bottom: 0;">등급 (필수 입력)</div>
+                <button class="btn-small" onclick="resetForm()">🔄 초기화</button>
+            </div>
+            <table class="grade-table">
+                <thead>
+                    <tr>
+                        <th>국어</th>
+                        <th>수학</th>
+                        <th>영어</th>
+                        <th>탐구1</th>
+                        <th>탐구2</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="number" id="gradeKor" class="grade-input" data-next="gradeMath" min="1" max="9" maxlength="1" placeholder="1" required></td>
+                        <td><input type="number" id="gradeMath" class="grade-input" data-next="gradeEng" min="1" max="9" maxlength="1" placeholder="1" required></td>
+                        <td><input type="number" id="gradeEng" class="grade-input" data-next="gradeTam1" min="1" max="9" maxlength="1" placeholder="1" required></td>
+                        <td><input type="number" id="gradeTam1" class="grade-input" data-next="gradeTam2" min="1" max="9" maxlength="1" placeholder="1"></td>
+                        <td><input type="number" id="gradeTam2" class="grade-input" min="1" max="9" maxlength="1" placeholder="1"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="divider"></div>
+        
+        <div class="form-section">
+            <div class="collapsible-header" onclick="togglePercentile()">
+                <span class="toggle-icon" id="toggleIcon">▼</span>
+                <span>백분위 입력하기 (선택사항)</span>
+            </div>
+            <div class="collapsible-content" id="percentileContent">
+                <div class="info-box">
+                    백분위를 함께 입력하면 더 정확한 반배정을 받을 수 있습니다.
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;">
+                    <div class="form-group">
+                        <label for="percentKor">국어</label>
+                        <input type="number" id="percentKor" min="0" max="100" placeholder="98">
+                    </div>
+                    <div class="form-group">
+                        <label for="percentMath">수학</label>
+                        <input type="number" id="percentMath" min="0" max="100" placeholder="99">
+                    </div>
+                    <div class="form-group">
+                        <label for="percentEng">영어</label>
+                        <input type="number" id="percentEng" min="0" max="100" placeholder="100" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="percentTam1">탐구1</label>
+                        <input type="number" id="percentTam1" min="0" max="100" placeholder="96">
+                    </div>
+                    <div class="form-group">
+                        <label for="percentTam2">탐구2</label>
+                        <input type="number" id="percentTam2" min="0" max="100" placeholder="95">
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+            <button class="btn-primary" onclick="calculateClass()">📊 내 예상반 확인</button>
+        </div>
+    </div>
+    
+    <div class="result-section" id="resultSection">
+        <div class="head-card">
+            <div class="result-badge" id="resultBadge">
+                <div class="badge-label" id="badgeLabel">예상 반배정</div>
+                <h1 class="badge-class" id="badgeClass">HS 1반</h1>
+                <div class="badge-comparison" id="badgeComparison"></div>
+            </div>
+            
+            <div class="card result-body">
+                <table class="details-table" id="detailsTable"></table>
+                
+                <div class="lecture-box">
+                    <div class="lecture-title">📚 예상 단과 수강 개수</div>
+                    <div class="lecture-row">
+                        <span>주 <b>1회</b>(3T) 수업</span>
+                        <input type="number" id="lecCnt1" min="0" max="8" step="1" value="0">
+                        <span>개 수강 시</span>
+                        <span class="lecture-sum">합계 <b id="lecSum1">0</b> T</span>
+                    </div>
+                    <div class="lecture-row">
+                        <span>주 <b>2회</b>(6T) 수업</span>
+                        <input type="number" id="lecCnt2" min="0" max="8" step="1" value="0">
+                        <span>개 수강 시</span>
+                        <span class="lecture-sum">합계 <b id="lecSum2">0</b> T</span>
+                    </div>
+                    <div class="lecture-result" id="lectureResult"></div>
+                </div>
+                
+                <div id="tuitionTable" style="margin: 20px 0;"></div>
+                
+                <div class="info-box">
+                    <strong>💡 현재 반배정 기준</strong>
+                    <ul class="notice-list">
+                        <li>입력된 성적을 바탕으로 계산한 예상 반입니다. 실제 반배정은 모집현황, 학원 정책에 따라 달라질 수 있습니다.</li>
+                        <li>상기 전형 외 별도 전형(내신)으로 입학을 희망하시거나 보다 정확한 상담을 원하시면 학원으로 문의하시기 바랍니다.</li>
+                    </ul>
+                </div>
+                
+                <div class="action-row">
+                    <a class="btn-apply" id="applyBtn" href="#" target="_blank" rel="noopener"></a>
+                    <button class="btn-primary" onclick="backToForm()">✏️ 다시 계산하기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentStudentType = 'repeat';
+    let currentExamMode = 'score';
+    
+    // III. 대학 특별 전형 (24학번~25학번)
+    const UNIV_CLASS_MAP = {
+        "의약계열": "HS1",
+        "서울대": "HS2", "연세대": "HS2", "고려대": "HS2", "KAIST": "HS2", "POSTECH": "HS2",
+        "서강대": "MED", "성균관대": "MED", "한양대": "MED", "이화여대": "MED", "중앙대": "MED",
+        "GIST": "MED", "DGIST": "MED", "UNIST": "MED", "KENTECH": "MED",
+        "경희대": "YONSEI", "시립대": "YONSEI", "외대": "YONSEI", "건국대": "YONSEI",
+        "동국대": "YONSEI", "홍익대": "YONSEI", "숙명여대": "YONSEI",
+        "서울교대": "YONSEI", "경인교대": "YONSEI",
+        "기타4년제": "BLUE"
+    };
+    
+    // 사유 문구에 쓰는 표시용 라벨
+    const UNIV_LABEL = {
+        "의약계열": "의/치/한/수/약 계열 재학",
+        "GIST": "GIST", "DGIST": "DGIST", "UNIST": "UNIST", "KENTECH": "KENTECH",
+        "기타4년제": "4년제 대학 재학"
+    };
+
+    function univLabel(v) {
+        return UNIV_LABEL[v] || v;
+    }
+
+    // 원서접수 링크
+    const APPLY_LINKS = {
+        repeatScore: {
+            label: 'N수 성적전형으로 원서접수',
+            url: 'https://russeldc.megastudy.net/campus_common/mozip/index.asp?idx=5'
+        },
+        repeatUniv: {
+            label: 'N수 대학전형으로 원서접수',
+            url: 'https://russeldc.megastudy.net/campus_common/mozip/index.asp?idx=85'
+        },
+        current: {
+            label: '재학생 정규반 원서접수',
+            url: 'https://russeldc.megastudy.net/campus_common/mozip/index.asp?idx=59'
+        }
+    };
+
+    const CLASS_NAME = {
+        "HS1": "HS 1반", "HS2": "HS 2반", "MED": "서/의치대반", "YONSEI": "연고대반", "BLUE": "블루반", "GREEN": "그린반"
+    };
+    
+    // N수 바자관 이용료 (전체 시수 구간)
+    const REPEAT_TUITION_TABLE = {
+        cols: ["0T", "3T", "6T", "9T", "12T", "15T", "18T"],
+        note: "단과 수업 \"3T\" 수강 시 마다, 바자관 이용료 15~24만원 지원 (전액지원 일부 구간 제외)",
+        rows: [
+            { code: "HS1",    name: "HS 1반",      duty: "0T", prices: ["30만원", "15만원", "전액지원", "-", "-", "-", "-"] },
+            { code: "HS2",    name: "HS 2반",      duty: "0T", prices: ["45만원", "30만원", "15만원", "전액지원", "-", "-", "-"] },
+            { code: "MED",    name: "서/의치대반",  duty: "3T", prices: ["-", "63만원", "45만원", "27만원", "6만원", "전액지원", "-"] },
+            { code: "YONSEI", name: "연고대반",     duty: "6T", prices: ["-", "-", "66만원", "48만원", "27만원", "6만원", "전액지원"] },
+            { code: "BLUE",   name: "블루반",       duty: "6T", prices: ["-", "-", "72만원", "54만원", "33만원", "9만원", "전액지원"] },
+            { code: "GREEN",  name: "그린반",       duty: "9T", prices: ["-", "-", "-", "60만원", "39만원", "15만원", "전액지원"] }
+        ]
+    };
+    
+    // 고3 이용료 (전체 시수 구간)
+    const HIGH3_TUITION_TABLE = {
+        cols: ["0T", "3T", "6T", "9T", "12T", "15T"],
+        note: "단과 수업 \"3T\" 수강 시 마다, 바자관 이용료 15~21만원 지원 (전액지원 일부 구간 제외 / 한 달 바자관 이용료 72만원 기준)",
+        rows: [
+            { code: "HS1",    name: "전교 1등반",   duty: "0T", prices: ["15만원", "전액지원", "-", "-", "-", "-"] },
+            { code: "HS2",    name: "HS",          duty: "0T", prices: ["42만원", "27만원", "9만원", "전액지원", "-", "-"] },
+            { code: "MED",    name: "서/의치대반",  duty: "0T", prices: ["63만원", "45만원", "24만원", "전액지원", "-", "-"] },
+            { code: "YONSEI", name: "연고대반",     duty: "3T", prices: ["-", "54만원", "36만원", "15만원", "전액지원", "-"] },
+            { code: "BLUE",   name: "블루반",       duty: "3T", prices: ["-", "63만원", "42만원", "21만원", "전액지원", "-"] },
+            { code: "GREEN",  name: "그린반",       duty: "6T", prices: ["-", "-", "51만원", "30만원", "9만원", "전액지원"] }
+        ]
+    };
+    
+    // 고2 이용료 (전체 시수 구간)
+    const HIGH2_TUITION_TABLE = {
+        cols: ["0T", "3T", "6T", "9T"],
+        note: "단과 수업 \"3T\" 수강 시 마다, 바자관 이용료 24만원 지원 (전액지원 일부 구간 제외 / 한 달 바자관 이용료 72만원 기준)",
+        rows: [
+            { code: "HS1",    name: "전교 1등반",   duty: "0T", prices: ["12만원", "전액지원", "-", "-"] },
+            { code: "HS2",    name: "HS반",        duty: "3T", prices: ["-", "12만원", "전액지원", "-"] },
+            { code: "MED",    name: "서/의치대반",  duty: "3T", prices: ["-", "24만원", "전액지원", "-"] },
+            { code: "YONSEI", name: "연고대반",     duty: "3T", prices: ["-", "36만원", "12만원", "전액지원"] },
+            { code: "BLUE",   name: "블루반",       duty: "3T", prices: ["-", "48만원", "24만원", "전액지원"] }
+        ]
+    };
+    
+    // 학생 구분에 맞는 반 이름 반환
+    function classLabel(code) {
+        let tableData;
+        if (currentStudentType === 'repeat') {
+            tableData = REPEAT_TUITION_TABLE;
+        } else {
+            const g = document.getElementById('selectGrade').value;
+            tableData = (g === 'grade2') ? HIGH2_TUITION_TABLE : HIGH3_TUITION_TABLE;
+        }
+        const row = tableData.rows.find(r => r.code === code);
+        return row ? row.name : CLASS_NAME[code];
+    }
+
+    function togglePercentile() {
+        const content = document.getElementById('percentileContent');
+        const icon = document.getElementById('toggleIcon');
+        content.classList.toggle('show');
+        icon.classList.toggle('open');
+    }
+
+    function changeStudentType(type) {
+        currentStudentType = type;
+        document.querySelectorAll('.type-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`[data-type="${type}"]`).classList.add('active');
+        
+        const examModeGroup = document.getElementById('examModeGroup');
+        const examModeLabel = document.getElementById('examModeLabel');
+        const gradeSelectSection = document.getElementById('gradeSelectSection');
+        
+        if (type === 'repeat') {
+            examModeGroup.classList.add('show');
+            examModeLabel.style.display = 'block';
+            gradeSelectSection.style.display = 'none';
+        } else {
+            examModeGroup.classList.remove('show');
+            examModeLabel.style.display = 'none';
+            gradeSelectSection.style.display = 'block';
+            currentExamMode = 'score';
+            updateUnivselectVisbility();
+        }
+        updateExamOptions();
+    }
+    
+    function changeExamMode(mode) {
+        currentExamMode = mode;
+        document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`[data-mode="${mode}"]`).classList.add('active');
+        updateUnivselectVisbility();
+    }
+    
+    function updateUnivselectVisbility() {
+        const univSelectSection = document.getElementById('univSelectSection');
+        univSelectSection.style.display = (currentStudentType === 'repeat' && currentExamMode === 'univ') ? 'block' : 'none';
+    }
+
+    function updateExamOptions() {
+        const examSelect = document.getElementById('examType');
+        const high3Option = examSelect.querySelector('option[value="high3"]');
+        if (currentStudentType === 'repeat') {
+            if (high3Option) high3Option.style.display = 'none';
+            examSelect.value = 'suneung';
+        } else {
+            if (high3Option) high3Option.style.display = 'block';
+            examSelect.value = 'high3';
+        }
+    }
+
+    function calculateClass() {
+        const examType = document.getElementById('examType').value;
+        const gradeKor = Number(document.getElementById('gradeKor').value) || 9;
+        const gradeMath = Number(document.getElementById('gradeMath').value) || 9;
+        const gradeEng = Number(document.getElementById('gradeEng').value) || 9;
+        const gradeTam1 = Number(document.getElementById('gradeTam1').value) || 9;
+        const gradeTam2 = Number(document.getElementById('gradeTam2').value) || 9;
+        
+        const percentKor = Number(document.getElementById('percentKor').value) || 0;
+        const percentMath = Number(document.getElementById('percentMath').value) || 0;
+        const percentTam1 = Number(document.getElementById('percentTam1').value) || 0;
+        const percentTam2 = Number(document.getElementById('percentTam2').value) || 0;
+
+        const result = calculateBestClass(examType, gradeKor, gradeMath, gradeEng, gradeTam1, gradeTam2);
+        const scoreClass = result.code;
+        let finalClass = scoreClass;
+        let reasonText = '';
+
+        // 성적 기준 설명 문장
+        let scoreSentence;
+        if (result.capped) {
+            scoreSentence = `${result.reason}${result.josa} ${classLabel(result.cappedFrom)} 기준을 충족하지만, ${result.examLabel} 제출 시 ${classLabel(scoreClass)}까지 지원 가능합니다.`;
+        } else if (result.isLowest) {
+            scoreSentence = `${result.reason} 기준으로 ${classLabel(scoreClass)} 지원 대상이며, 모집정원의 5% 이내로 선발합니다.`;
+        } else {
+            scoreSentence = `${result.reason}${result.josa} ${classLabel(scoreClass)} 입학이 가능합니다.`;
+        }
+
+        if (currentStudentType === 'repeat' && currentExamMode === 'univ') {
+            const selectedUniv = document.getElementById('selectUniv').value;
+
+            if (selectedUniv) {
+                const univClass = UNIV_CLASS_MAP[selectedUniv];
+                if (CLASS_RANK[univClass] < CLASS_RANK[scoreClass]) {
+                    finalClass = univClass;
+                    reasonText = `성적전형(${classLabel(scoreClass)})과 대학전형 분석 결과, ${univLabel(selectedUniv)} 기준 대학전형으로 더 상위반인 ${classLabel(univClass)}으로 배정이 가능합니다.`;
+                } else {
+                    reasonText = `${scoreSentence} (${univLabel(selectedUniv)} 대학전형 기준보다 성적전형 결과가 더 상위반입니다.)`;
+                }
+            } else {
+                reasonText = `${scoreSentence} 재학 중인 학교를 선택하면 대학전형 기준도 함께 비교됩니다.`;
+            }
+        } else {
+            reasonText = scoreSentence;
+        }
+
+        displayResult(finalClass, gradeKor, gradeMath, gradeEng, gradeTam1, gradeTam2, reasonText);
+    }
+
+    const EXAM_LABEL = {
+        high3: '전국연합평가',
+        suneung: '수능',
+        '9pyung': '9월 모의평가',
+        '6pyung': '6월 모의평가'
+    };
+
+    // 숫자 뒤 조사(으로/로) 처리
+    function josaRo(n) {
+        const last = String(n).slice(-1);
+        return ['3', '6', '0'].includes(last) ? '으로' : '로';
+    }
+
+    const CLASS_RANK = { "HS1": 1, "HS2": 2, "MED": 3, "YONSEI": 4, "BLUE": 5, "GREEN": 6 };
+
+    // 제출 성적표별 최대 지원 가능 반 (N수 모의고사 전형)
+    const EXAM_MAX_CLASS = {
+        suneung: "HS1",
+        "9pyung": "HS2",
+        "6pyung": "MED"
+    };
+
+    // 학생 구분별 최하위(정원 5% 이내 선발) 반
+    const LOWEST_CLASS = { repeat: "GREEN", grade3: "GREEN", grade2: "BLUE" };
+
+    function currentTrack() {
+        if (currentStudentType === 'repeat') return 'repeat';
+        return document.getElementById('selectGrade').value === 'grade2' ? 'grade2' : 'grade3';
+    }
+
+    /*
+     * 모의고사 전형 입학 기준
+     * [N수]  국/수/영 또는 국/수/탐(1) 합: HS1=3, HS2=4, 서의치=5
+     *        국/수/영/탐(1) 중 3개 영역 합: 연고대=6, 블루=8 이내 / 그린=정원 5% 이내
+     *        제출 성적표 상한: 수능=HS1, 9평=HS2, 6평=서의치
+     * [고3]  국/수/영 또는 국/수/탐(1) 합: HS반=3, 서의치=4
+     *        국/수/영/탐(1) 중 3개 영역 합: 연고대=6, 블루=8 / 그린=정원 5% 이내
+     *        전교 1등반은 내신 전형 전용
+     * [고2]  국/수/영 또는 국/수/탐(1) 합: HS반=3, 서의치=4, 연고대=6 이내
+     *        블루반=정원 5% 이내 / 전교 1등반은 내신 전형 전용
+     */
+    function calculateBestClass(examType, kor, math, eng, tam1, tam2) {
+        const track = currentTrack();
+        const examLabel = EXAM_LABEL[examType] || '제출 성적표';
+        const bestTam = Math.min(tam1, tam2);
+
+        // 국/수/영 또는 국/수/탐(1) 중 유리한 조합
+        const sumKME = kor + math + eng;
+        const sumKMT = kor + math + bestTam;
+        const sum3 = Math.min(sumKME, sumKMT);
+        const sum3Label = (sumKMT < sumKME) ? '국/수/탐(1)' : '국/수/영';
+
+        // 국/수/영/탐(1) 중 상위 3개 영역
+        const sorted = [kor, math, eng, bestTam].sort((a, b) => a - b);
+        const top3 = sorted[0] + sorted[1] + sorted[2];
+
+        const byCombo = (n) => `${examLabel} ${sum3Label} 등급 합 ${n}`;
+        const byTop3 = (n) => `${examLabel} 상위 3개 영역 등급 합 ${n}`;
+
+        let code, reason;
+
+        if (track === 'grade2') {
+            if (sum3 <= 3)      { code = "HS2";    reason = byCombo(sum3); }
+            else if (sum3 <= 4) { code = "MED";    reason = byCombo(sum3); }
+            else if (sum3 <= 6) { code = "YONSEI"; reason = byCombo(sum3); }
+            else                { code = "BLUE";   reason = byCombo(sum3); }
+        } else if (track === 'grade3') {
+            if (sum3 <= 3)      { code = "HS2";    reason = byCombo(sum3); }
+            else if (sum3 <= 4) { code = "MED";    reason = byCombo(sum3); }
+            else if (top3 <= 6) { code = "YONSEI"; reason = byTop3(top3); }
+            else if (top3 <= 8) { code = "BLUE";   reason = byTop3(top3); }
+            else                { code = "GREEN";  reason = byTop3(top3); }
+        } else {
+            if (sum3 <= 3)      { code = "HS1";    reason = byCombo(sum3); }
+            else if (sum3 <= 4) { code = "HS2";    reason = byCombo(sum3); }
+            else if (sum3 <= 5) { code = "MED";    reason = byCombo(sum3); }
+            else if (top3 <= 6) { code = "YONSEI"; reason = byTop3(top3); }
+            else if (top3 <= 8) { code = "BLUE";   reason = byTop3(top3); }
+            else                { code = "GREEN";  reason = byTop3(top3); }
+        }
+
+        // 제출 성적표에 따른 상한 (N수 전용)
+        let capped = false;
+        let cappedFrom = null;
+        if (track === 'repeat') {
+            const maxCode = EXAM_MAX_CLASS[examType];
+            if (maxCode && CLASS_RANK[code] < CLASS_RANK[maxCode]) {
+                cappedFrom = code;
+                code = maxCode;
+                capped = true;
+            }
+        }
+
+        return {
+            code: code,
+            reason: reason,
+            josa: josaRo(reason.replace(/[^0-9]/g, '').slice(-1)),
+            capped: capped,
+            cappedFrom: cappedFrom,
+            examLabel: examLabel,
+            isLowest: code === LOWEST_CLASS[track]
+        };
+    }
+
+    function displayResult(classCode, kor, math, eng, tam1, tam2, comparison) {
+        // 학생 구분 접두어 + 반명
+        let prefix = '';
+        let tableData;
+        if (currentStudentType === 'repeat') {
+            prefix = 'N수';
+            tableData = REPEAT_TUITION_TABLE;
+        } else {
+            const selectedGrade = document.getElementById('selectGrade').value;
+            prefix = (selectedGrade === 'grade2') ? '고2' : '고3';
+            tableData = (selectedGrade === 'grade2') ? HIGH2_TUITION_TABLE : HIGH3_TUITION_TABLE;
+        }
+        const rowMatch = tableData.rows.find(r => r.code === classCode);
+        const className = rowMatch ? rowMatch.name : CLASS_NAME[classCode];
+        document.getElementById('badgeClass').textContent = prefix + ' ' + className;
+        document.getElementById('badgeComparison').innerHTML = comparison;
+        
+        // 입력 성적 가로 표
+        const detailsHtml = `
+            <thead>
+                <tr><th>국어</th><th>수학</th><th>영어</th><th>탐구1</th><th>탐구2</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>${kor}</td><td>${math}</td><td>${eng}</td><td>${tam1}</td><td>${tam2}</td></tr>
+            </tbody>
+        `;
+        document.getElementById('detailsTable').innerHTML = detailsHtml;
+        
+        // 단과 수강 계산 초기화 (이용료 표도 함께 렌더링됨)
+        resultState = { classCode: classCode, tableData: tableData };
+        document.getElementById('lecCnt1').value = 0;
+        document.getElementById('lecCnt2').value = 0;
+        updateLectureCalc();
+        
+        // 원서접수 버튼
+        let applyKey;
+        if (currentStudentType === 'repeat') {
+            applyKey = (currentExamMode === 'univ') ? 'repeatUniv' : 'repeatScore';
+        } else {
+            applyKey = 'current';
+        }
+        const applyInfo = APPLY_LINKS[applyKey];
+        const applyBtn = document.getElementById('applyBtn');
+        applyBtn.textContent = '📝 ' + applyInfo.label;
+        applyBtn.href = applyInfo.url;
+        
+        document.getElementById('inputHeadCard').style.display = 'none';
+        document.getElementById('resultSection').classList.add('show');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    function renderTuitionTable(tableData, classCode, highlightCol) {
+        let html = '<div class="tuition-wrap"><table class="tuition-table">';
+        html += '<thead><tr>';
+        html += '<th rowspan="2">"반" 구분</th>';
+        html += '<th rowspan="2">의무시수</th>';
+        html += `<th colspan="${tableData.cols.length}">단과 등록 시수(T)에 따른 바자관 이용료</th>`;
+        html += '</tr><tr>';
+        tableData.cols.forEach((c, i) => {
+            html += `<th class="${i === highlightCol ? 'col-highlight' : ''}">${c}</th>`;
+        });
+        html += '</tr></thead><tbody>';
+
+        tableData.rows.forEach(row => {
+            const isMine = row.code === classCode;
+            html += `<tr class="${isMine ? 'row-highlight' : ''}">`;
+            html += `<td class="cell-name">${row.name}${isMine ? ' <span class="mine-tag">내 반</span>' : ''}</td>`;
+            html += `<td class="cell-duty">${row.duty}</td>`;
+            row.prices.forEach((p, i) => {
+                let cls = p === '전액지원' ? 'cell-free' : (p === '-' ? 'cell-empty' : '');
+                if (isMine && i === highlightCol) cls += ' col-highlight';
+                html += `<td class="${cls.trim()}">${p}</td>`;
+            });
+            html += '</tr>';
+        });
+
+        html += '</tbody></table></div>';
+        html += `<div class="tuition-note">▶ ${tableData.note}</div>`;
+        return html;
+    }
+
+    // 단과 수강 개수 → 시수/이용료 계산
+    const T_PER_LECTURE = { once: 3, twice: 6 };
+    let resultState = { classCode: null, tableData: null };
+
+    function updateLectureCalc() {
+        if (!resultState.tableData) return;
+
+        const clamp = (v) => Math.max(0, Math.min(8, Math.floor(Number(v) || 0)));
+        const el1 = document.getElementById('lecCnt1');
+        const el2 = document.getElementById('lecCnt2');
+        const c1 = clamp(el1.value);
+        const c2 = clamp(el2.value);
+        if (String(c1) !== el1.value) el1.value = c1;
+        if (String(c2) !== el2.value) el2.value = c2;
+
+        const t1 = c1 * T_PER_LECTURE.once;
+        const t2 = c2 * T_PER_LECTURE.twice;
+        const total = t1 + t2;
+
+        document.getElementById('lecSum1').textContent = t1;
+        document.getElementById('lecSum2').textContent = t2;
+
+        const { tableData, classCode } = resultState;
+        const row = tableData.rows.find(r => r.code === classCode);
+
+        // 총 시수에 해당하는 컬럼 (표의 최대 구간을 넘으면 마지막 구간 적용)
+        const colValues = tableData.cols.map(c => parseInt(c, 10));
+        let colIdx = colValues.indexOf(total);
+        let overMax = false;
+        if (colIdx === -1) {
+            colIdx = colValues.length - 1;
+            overMax = true;
+        }
+
+        let msg = `예상 총 시수는 <b>${total}T</b>`;
+        if (row) {
+            // 표의 '-'는 앞쪽이면 의무시수 미달, 뒤쪽이면 이미 전액지원 구간
+            const firstIdx = row.prices.findIndex(p => p !== '-');
+            let lastIdx = -1;
+            row.prices.forEach((p, i) => { if (p !== '-') lastIdx = i; });
+
+            let price = row.prices[colIdx];
+            if (price === '-' && colIdx > lastIdx) price = '전액지원';
+
+            if (colIdx < firstIdx) {
+                msg += `이며, ${row.name}은 의무시수 <b>${row.duty}</b> 이상부터 등록 가능합니다.`;
+                msg += `<br><span class="warn">현재 시수로는 해당 반 등록 조건을 충족하지 않습니다.</span>`;
+            } else if (price === '전액지원') {
+                msg += `이며, 이를 반영한 예상 바자관 이용료는 <b>전액지원</b> 대상입니다.`;
+            } else {
+                msg += `이며, 이를 반영한 예상 바자관 이용료는 <b>${price}</b>입니다.`;
+            }
+            if (overMax) {
+                msg += `<br><span class="warn">표의 최대 구간(${tableData.cols[tableData.cols.length - 1]})을 초과하여 해당 구간 기준으로 안내됩니다.</span>`;
+            }
+        } else {
+            msg += `입니다.`;
+        }
+
+        document.getElementById('lectureResult').innerHTML = msg;
+        document.getElementById('tuitionTable').innerHTML =
+            '<div class="tuition-title">💰 바자관(바른공부 자습전용관) 이용료</div>' +
+            renderTuitionTable(tableData, classCode, colIdx);
+    }
+
+    function resetForm() {
+        document.getElementById('gradeKor').value = '';
+        document.getElementById('gradeMath').value = '';
+        document.getElementById('gradeEng').value = '';
+        document.getElementById('gradeTam1').value = '';
+        document.getElementById('gradeTam2').value = '';
+        document.getElementById('percentKor').value = '';
+        document.getElementById('percentMath').value = '';
+        document.getElementById('percentTam1').value = '';
+        document.getElementById('percentTam2').value = '';
+        document.getElementById('selectUniv').value = '';
+        if (document.getElementById('selectGrade')) {
+            document.getElementById('selectGrade').value = 'grade3';
+        }
+        
+        const content = document.getElementById('percentileContent');
+        const icon = document.getElementById('toggleIcon');
+        content.classList.remove('show');
+        icon.classList.remove('open');
+        
+        document.getElementById('gradeKor').focus();
+    }
+
+    function backToForm() {
+        document.getElementById('inputHeadCard').style.display = 'block';
+        document.getElementById('resultSection').classList.remove('show');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    window.addEventListener('DOMContentLoaded', function() {
+        changeStudentType('repeat');
+        document.getElementById('gradeKor').focus();
+        
+        ['lecCnt1', 'lecCnt2'].forEach(id => {
+            const el = document.getElementById(id);
+            el.addEventListener('input', updateLectureCalc);
+            el.addEventListener('focus', function() {
+                const t = this;
+                setTimeout(function() { t.select(); }, 0);
+            });
+        });
+        
+        const gradeInputs = document.querySelectorAll('.grade-input');
+        gradeInputs.forEach(input => {
+            // 칸을 누르면 기존 값이 선택돼서 새로 누른 숫자로 바로 교체됨
+            input.addEventListener('focus', function() {
+                const el = this;
+                setTimeout(function() { el.select(); }, 0);
+            });
+            input.addEventListener('mouseup', function(e) {
+                e.preventDefault();
+            });
+
+            input.addEventListener('input', function() {
+                // 두 자리 이상 입력되면 마지막에 누른 숫자만 남김
+                if (this.value.length > 1) {
+                    this.value = this.value.slice(-1);
+                }
+                if (this.value) {
+                    const nextFieldId = this.getAttribute('data-next');
+                    if (nextFieldId) {
+                        document.getElementById(nextFieldId).focus();
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+</body>
+</html>
