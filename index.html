@@ -582,6 +582,82 @@
             vertical-align: middle;
         }
         
+        .cost-box {
+            background: #fff;
+            border: 1px solid #dfe3ec;
+            border-radius: 10px;
+            padding: 16px 18px;
+            margin: 20px 0;
+        }
+        
+        .cost-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+        }
+        
+        .cost-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        
+        .cost-table td {
+            padding: 8px 4px;
+            border-bottom: 1px solid #eef0f5;
+        }
+        
+        .cost-table td:first-child {
+            color: #444;
+            font-weight: 600;
+        }
+        
+        .cost-table td:last-child {
+            text-align: right;
+            font-weight: 700;
+            color: #333;
+            white-space: nowrap;
+        }
+        
+        .cost-table tr.cost-discount td {
+            color: #c2410c;
+        }
+        
+        .cost-table tr.cost-total td {
+            border-bottom: none;
+            border-top: 2px solid #dfe3ec;
+            padding-top: 12px;
+            font-size: 15px;
+            color: #0052CC;
+        }
+        
+        .cost-note {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.6;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed #e5e7eb;
+        }
+        
+        .rate-tag {
+            display: inline-block;
+            background: #fff1e6;
+            border: 1px solid #f5c9a0;
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #c2410c;
+            margin-left: 4px;
+            vertical-align: middle;
+        }
+        
+        .cost-warn {
+            color: #b45309;
+        }
+        
         .tuition-note {
             font-size: 11px;
             color: #555;
@@ -600,11 +676,38 @@
             margin: 20px 0;
         }
         
+        .lecture-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        
         .lecture-title {
             font-size: 14px;
             font-weight: 700;
             color: #1a1a1a;
-            margin-bottom: 12px;
+        }
+        
+        .btn-timetable {
+            display: inline-block;
+            padding: 6px 12px;
+            background: #eef2f8;
+            border: 1px solid #ccd6e5;
+            border-radius: 6px;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        
+        .btn-timetable:hover {
+            background: #e0e7f2;
+            border-color: #aebdd2;
         }
         
         .lecture-row {
@@ -1000,7 +1103,10 @@
                 <table class="details-table" id="detailsTable"></table>
                 
                 <div class="lecture-box">
-                    <div class="lecture-title">📚 예상 단과 수강 개수</div>
+                    <div class="lecture-head">
+                        <div class="lecture-title">📚 예상 단과 수강 개수</div>
+                        <a class="btn-timetable" href="https://russeldc.megastudy.net/russel/Data/danka_naesin/KxFxWqXlJATV.pdf" target="_blank" rel="noopener">📅 단과 시간표 한눈에 보기</a>
+                    </div>
                     <div class="lecture-row">
                         <span>주 <b>1회</b>(3T) 수업</span>
                         <input type="number" id="lecCnt1" min="0" max="8" step="1" value="0">
@@ -1017,6 +1123,8 @@
                 </div>
                 
                 <div id="tuitionTable" style="margin: 20px 0;"></div>
+                
+                <div id="costSummary"></div>
                 
                 <div class="info-box">
                     <strong>💡 현재 반배정 기준</strong>
@@ -1222,6 +1330,7 @@
 
         const result = calculateBestClass(examType, gradeKor, gradeMath, gradeEng, gradeTam1, gradeTam2);
         const scoreClass = result.code;
+        currentSum3 = result.sum3;
         let finalClass = scoreClass;
         let reasonText = '';
 
@@ -1355,6 +1464,7 @@
             josa: josaRo(reason.replace(/[^0-9]/g, '').slice(-1)),
             capped: capped,
             cappedFrom: cappedFrom,
+            sum3: sum3,
             examLabel: examLabel,
             isLowest: code === LOWEST_CLASS[track]
         };
@@ -1461,7 +1571,15 @@
 
     // 단과 수강 개수 → 시수/이용료 계산
     const T_PER_LECTURE = { once: 3, twice: 6 };
+    // 단과 1개당 4주 기준 예상 수강료 (만원)
+    const LECTURE_FEE = { once: 34, twice: 58 };
+
+    const wonNum = (str) => {
+        const m = String(str).match(/(\d+)만원/);
+        return m ? parseInt(m[1], 10) : null;
+    };
     let resultState = { classCode: null, tableData: null };
+    let currentSum3 = null;
 
     function updateLectureCalc() {
         if (!resultState.tableData) return;
@@ -1522,6 +1640,66 @@
         document.getElementById('tuitionTable').innerHTML =
             '<div class="tuition-title">💰 바자관(바른공부 자습전용관) 이용료</div>' +
             renderTuitionTable(tableData, classCode, colIdx);
+
+        renderCostSummary(row, colIdx, c1, c2);
+    }
+
+    // 장학혜택: 국/수/영 또는 국/수/탐(1) 등급 합 기준 단과 지원율
+    function scholarshipRate(sum3) {
+        if (sum3 === null || sum3 === undefined) return 0;
+        if (sum3 <= 3) return 0.2;
+        if (sum3 === 4) return 0.1;
+        return 0;
+    }
+
+    // 예상 비용 요약
+    function renderCostSummary(row, colIdx, cnt1, cnt2) {
+        const box = document.getElementById('costSummary');
+        if (!row) { box.innerHTML = ''; return; }
+
+        const firstIdx = row.prices.findIndex(p => p !== '-');
+        let lastIdx = -1;
+        row.prices.forEach((p, i) => { if (p !== '-') lastIdx = i; });
+
+        // 바자관 실납부액 (표 금액은 단과 등록에 따른 지원이 이미 반영된 값)
+        let baja;
+        let belowDuty = false;
+        if (colIdx < firstIdx) {
+            baja = wonNum(row.prices[firstIdx]) || 0;
+            belowDuty = true;
+        } else if (colIdx > lastIdx) {
+            baja = 0;
+        } else {
+            const p = row.prices[colIdx];
+            baja = (p === '전액지원') ? 0 : (wonNum(p) || 0);
+        }
+
+        const lectureFee = cnt1 * LECTURE_FEE.once + cnt2 * LECTURE_FEE.twice;
+        const rate = scholarshipRate(currentSum3);
+        const discount = Math.round(lectureFee * rate);
+        const total = baja + lectureFee - discount;
+
+        let html = '<div class="cost-box">';
+        html += '<div class="cost-title">🧾 예상 비용</div>';
+        html += '<table class="cost-table">';
+        html += `<tr><td>바자관</td><td>${baja}만원</td></tr>`;
+        html += `<tr><td>단과</td><td>${lectureFee}만원</td></tr>`;
+        // 장학혜택 대상자일 때만 노출
+        if (rate > 0) {
+            html += `<tr class="cost-discount"><td>장학혜택 <span class="rate-tag">단과 ${Math.round(rate * 100)}% 지원</span></td><td>-${discount}만원</td></tr>`;
+        }
+        html += `<tr class="cost-total"><td>합계비용 (예상)</td><td>${total}만원</td></tr>`;
+        html += '</table>';
+
+        html += '<div class="cost-note">';
+        html += '※ 강사별로 단과 금액이 상이하지만 3T 수업은 4주 진행 시 34만원, 6T 수업은 4주 58만원으로 반영하여 계산 되며, 위 금액은 예상 금액일뿐 실제 금액과 상이할 수 있습니다.';
+        html += '<br>※ 장학혜택은 국/수/영 또는 국/수/탐(1) 등급 합 3의 경우 단과 20% 지원, 합 4일 경우 단과 10% 지원';
+        if (belowDuty) {
+            html += `<br><span class="cost-warn">※ 현재 시수가 의무시수(${row.duty}) 미만이라 바자관 이용료 지원이 반영되지 않았습니다.</span>`;
+        }
+        html += '</div></div>';
+
+        box.innerHTML = html;
     }
 
     function resetForm() {
