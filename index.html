@@ -937,11 +937,11 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td><input type="number" id="gradeKor" class="grade-input" data-next="gradeMath" min="1" max="9" maxlength="1" placeholder="1" required></td>
-                        <td><input type="number" id="gradeMath" class="grade-input" data-next="gradeEng" min="1" max="9" maxlength="1" placeholder="1" required></td>
-                        <td><input type="number" id="gradeEng" class="grade-input" data-next="gradeTam1" min="1" max="9" maxlength="1" placeholder="1" required></td>
-                        <td><input type="number" id="gradeTam1" class="grade-input" data-next="gradeTam2" min="1" max="9" maxlength="1" placeholder="1"></td>
-                        <td><input type="number" id="gradeTam2" class="grade-input" min="1" max="9" maxlength="1" placeholder="1"></td>
+                        <td><input type="text" inputmode="numeric" pattern="[1-9]" autocomplete="off" id="gradeKor" class="grade-input" data-next="gradeMath" maxlength="1" placeholder="1" required></td>
+                        <td><input type="text" inputmode="numeric" pattern="[1-9]" autocomplete="off" id="gradeMath" class="grade-input" data-next="gradeEng" maxlength="1" placeholder="1" required></td>
+                        <td><input type="text" inputmode="numeric" pattern="[1-9]" autocomplete="off" id="gradeEng" class="grade-input" data-next="gradeTam1" maxlength="1" placeholder="1" required></td>
+                        <td><input type="text" inputmode="numeric" pattern="[1-9]" autocomplete="off" id="gradeTam1" class="grade-input" data-next="gradeTam2" maxlength="1" placeholder="1"></td>
+                        <td><input type="text" inputmode="numeric" pattern="[1-9]" autocomplete="off" id="gradeTam2" class="grade-input" maxlength="1" placeholder="1"></td>
                     </tr>
                 </tbody>
             </table>
@@ -1560,10 +1560,7 @@
         ['lecCnt1', 'lecCnt2'].forEach(id => {
             const el = document.getElementById(id);
             el.addEventListener('input', updateLectureCalc);
-            el.addEventListener('focus', function() {
-                const t = this;
-                setTimeout(function() { t.select(); }, 0);
-            });
+            el.addEventListener('change', updateLectureCalc);
         });
         
         const gradeInputs = document.querySelectorAll('.grade-input');
@@ -1577,12 +1574,30 @@
                 e.preventDefault();
             });
 
-            input.addEventListener('input', function() {
-                // 두 자리 이상 입력되면 마지막에 누른 숫자만 남김
-                if (this.value.length > 1) {
-                    this.value = this.value.slice(-1);
+            // 위/아래 방향키로 등급 조절 (칸 이동 없음)
+            input.addEventListener('keydown', function(e) {
+                if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+                e.preventDefault();
+                const cur = parseInt(this.value, 10);
+                let next;
+                if (isNaN(cur)) {
+                    next = (e.key === 'ArrowUp') ? 1 : 9;
+                } else {
+                    next = cur + (e.key === 'ArrowUp' ? -1 : 1);
+                    next = Math.max(1, Math.min(9, next));
                 }
-                if (this.value) {
+                this.value = next;
+                this.select();
+            });
+
+            input.addEventListener('input', function() {
+                const before = this.value;
+                // 1~9 숫자만, 마지막에 누른 한 자리만 남김
+                const digits = before.replace(/[^1-9]/g, '');
+                this.value = digits ? digits.slice(-1) : '';
+
+                // 유효한 숫자를 새로 입력한 경우에만 다음 칸으로 이동
+                if (this.value && /[1-9]/.test(before)) {
                     const nextFieldId = this.getAttribute('data-next');
                     if (nextFieldId) {
                         document.getElementById(nextFieldId).focus();
