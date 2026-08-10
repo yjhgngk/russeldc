@@ -449,12 +449,31 @@
             display: none;
         }
         
+        .details-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .details-title .exam-tag {
+            font-size: 12px;
+            font-weight: 500;
+            color: #555;
+        }
+        
         .details-table {
             width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
-            margin-top: 20px;
             font-size: 13px;
             margin-bottom: 20px;
+        }
+        
+        .details-table th,
+        .details-table td {
+            width: 20%;
         }
         
         .details-table th {
@@ -977,6 +996,7 @@
             </div>
             
             <div class="card result-body">
+                <div class="details-title" id="detailsTitle"></div>
                 <table class="details-table" id="detailsTable"></table>
                 
                 <div class="lecture-box">
@@ -1367,6 +1387,11 @@
             </tbody>
         `;
         document.getElementById('detailsTable').innerHTML = detailsHtml;
+        
+        // 표 제목: 내 성적(성적표 : 수능)
+        const examVal = document.getElementById('examType').value;
+        document.getElementById('detailsTitle').innerHTML =
+            `내 성적 <span class="exam-tag">(성적표 : ${EXAM_LABEL[examVal] || '-'})</span>`;
         
         // 단과 수강 계산 초기화 (이용료 표도 함께 렌더링됨)
         resultState = { classCode: classCode, tableData: tableData };
