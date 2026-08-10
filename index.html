@@ -7,9 +7,15 @@
     <style>
         * { box-sizing: border-box; }
         
+        html {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+        
         body {
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
             background: #f8f9fa;
             font-family: 'Noto Sans KR', 'Pretendard', 'Malgun Gothic', sans-serif;
             color: #333;
@@ -90,6 +96,12 @@
             margin-bottom: 24px;
             display: flex;
             flex-direction: column;
+            min-width: 0;
+        }
+        
+        .card > * {
+            min-width: 0;
+            max-width: 100%;
         }
         
         .head-card .card {
@@ -502,6 +514,8 @@
         }
         
         .tuition-wrap {
+            width: 100%;
+            min-width: 0;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
@@ -925,6 +939,16 @@
                 display: block;
             }
             
+            /* iOS Safari는 16px 미만 입력칸을 탭하면 화면을 확대함 */
+            input,
+            select,
+            .grade-table input,
+            .lecture-row input,
+            .form-group input,
+            .form-group select {
+                font-size: 16px;
+            }
+            
             .select-grid {
                 grid-template-columns: 1fr;
                 gap: 12px;
@@ -948,13 +972,23 @@
                 font-size: 36px;
             }
             
-            .grade-table th, .grade-table td {
-                padding: 8px 4px;
+            .grade-table th {
+                padding: 8px 2px;
                 font-size: 11px;
             }
             
-            .grade-table input {
-                font-size: 12px;
+            .grade-table td {
+                padding: 4px 2px;
+            }
+            
+            .tuition-table {
+                min-width: 480px;
+                font-size: 11px;
+            }
+            
+            .tuition-table th,
+            .tuition-table td {
+                padding: 6px 4px;
             }
             
             .action-row {
